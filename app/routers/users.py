@@ -86,3 +86,32 @@ def get_user(
     
     user_service = UserService()
     return user_service.get_user_by_id(user_id)
+
+def delete_user():
+    """
+        - Only admin can delete any user.
+        - Admin cannot delete himself.
+    """
+    
+    pass
+
+def update_user():
+    """
+        Any user can update the information of it.
+        Admin can update the information of any user.
+    """
+    pass
+
+def change_role():
+    """
+        Only admin can change the user role
+    """
+    pass
+
+def change_password():
+    """
+        Any user can  change it's password.
+        Admin can change the password of any user.
+    """
+    pass
+
