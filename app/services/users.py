@@ -4,6 +4,9 @@ from uuid import uuid4
 from datetime import timedelta
 from pydantic import UUID4
 
+
+from app.core.security import hash_password, verify_password
+
 from app.schemas.users import (
     User,
     UserRegitserRequest,
@@ -20,7 +23,6 @@ class UserService:
     def __init__(self) -> None:
         pass
     
-    
     def regitser(self, request: UserRegitserRequest) -> UserTokenResponse:
         
         for user in users:
@@ -35,7 +37,7 @@ class UserService:
                         name=request.name.strip().lower(),
                         email=request.email.strip().lower(),
                         role=UserRole.USER,
-                        password=request.password
+                        password=hash_password(request.password)
                     )
 
         users.append(new_user)
@@ -53,7 +55,7 @@ class UserService:
     def sigin(self, request: UserSiginRequest):
         for user in users:
             if user.email == request.email:
-                if user.password != request.password:
+                if verify_password(request.password, user.password):
                     raise HTTPException(
                                 status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='Invalid User Password'
