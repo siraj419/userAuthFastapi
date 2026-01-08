@@ -13,3 +13,16 @@ users : list[User] = [
         role=UserRole.ADMIN
     )
 ]
+
+
+# db = {
+#     'users': users,
+#     'tasks': [
+#         {
+#             'id': uuid4(),
+#             'title': 'Sample Task 1',
+#             'description': 'This is a sample task description',
+#             'owner_id': users[0].id
+#         }
+#     ]
+# }

@@ -7,10 +7,7 @@ from pwdlib import PasswordHash
 password_hash = PasswordHash.recommended()
 
 from app.schemas.users import UserResponse
-from app.db.user import users
-
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-ALGORITHM = "HS256"
+from app.core.config import settings
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -19,7 +16,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
     return encoded_jwt
 
 
@@ -39,7 +36,7 @@ def verify_token(request: Request):
                 detail='Invalid auth token'
             )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         user_id = payload.get("user_id")
         if user_id is None:
             raise HTTPException(
@@ -55,6 +52,7 @@ def verify_token(request: Request):
     return user_id
 
 def get_current_user(request: Request) -> UserResponse:
+    from app.db.user import users
     user_id = verify_token(request)
 
     for user in users:
