@@ -51,24 +51,6 @@ def verify_token(request: Request):
         
     return user_id
 
-def get_current_user(request: Request) -> UserResponse:
-    from app.db.user import users
-    user_id = verify_token(request)
-
-    for user in users:
-        if str(user.id) == str(user_id):
-            return UserResponse(
-                id=user_id,
-                name=user.name,
-                email=user.email,
-                role=user.role
-            )
-    
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail='User not found in the token'
-    )
-
 def hash_password(password: str):
     return password_hash.hash(password)
 
